@@ -1,0 +1,5 @@
+*.log
+imgs/*
+!imgs/_DIR_
+data/*
+!data/_DIR_

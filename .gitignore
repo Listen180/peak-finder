@@ -1,3 +1,4 @@
+.DS_Store
 *.log
 imgs/*
 !imgs/_DIR_

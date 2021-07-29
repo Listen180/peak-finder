@@ -96,42 +96,6 @@ def remove_above_and_fit(y_org, y_fit, y_line, loop_num=2):
 
 
 
-
-
-def prune_data(y_org, curve, line):
-    """
-    """
-    y_modified = y_org.copy()
-    data_points_left = []
-    for i, xv in enumerate(x):
-        data_i = y_org[i]
-        y_curve_i = curve[i]
-        y_line_i = line[i]
-        if y_curve_i < y_line_i:
-            data_points_left.append(data_i)
-    data_avg = np.mean(data_points_left)
-    for i, xv in enumerate(x):
-        data_i = y_org[i]
-        y_curve_i = curve[i]
-        y_line_i = line[i]
-        if y_curve_i >= y_line_i:
-            y_modified[i] = data_avg
-    return y_modified
-
-
-def prune_and_fit(y_org, y_fit, y_line, loop_num=2):
-    """
-    """
-    for i in range(loop_num):
-        temp = prune_data(y_org, y_fit, y_line)
-        z_temp = np.polyfit(x, temp, 1, rcond=None, full=False, w=None, cov=False)
-        p_temp = np.poly1d(z_temp)
-        y_temp = p_temp(x)
-        y_line = y_temp
-    # print(p_temp)
-    return y_temp
-
-
 # =============================================================================
 # 
 # =============================================================================
@@ -164,11 +128,7 @@ def analysis(data_org, col_name):
     peak_x = x_arr[peaks].mean()
     print(f"peak_x: {peak_x}")
     
-    # gutter_x = x_arr[gutter]
-    # print(f"gutter_x: {gutter_x}")
-    # gutter_peak_right = gutter_x[gutter_x>peak_x][0]
-    # gutter_peak_left = gutter_x[gutter_x<peak_x][-1]
-    # print(f"gutter_peak_left: {gutter_peak_left}, gutter_peak_right: {gutter_peak_right}")
+
     
     # =============================================================================
     # Poly Fit
@@ -226,8 +186,6 @@ def analysis(data_org, col_name):
     print(f"is_gutter: {is_gutter}")
 
 
-    # from itertools import compress
-    # xs_index = list(compress(range(len(is_gutter)), is_gutter))
     xs = np.array(xs)
     xs = xs[tuple(is_gutter)]
 
@@ -253,7 +211,6 @@ def analysis(data_org, col_name):
     plt.plot(x, y_fit,'r',label='polyfit values')
     plt.plot(x, y_line,'yellow',label='fit line')
     plt.plot(x, y_support,'grey',label='support line')
-    # plt.plot(x, y_prune,'black',label='prune line')
     plt.plot(x, y_support_new,'black',label='support line (new)')
     plt.plot(xs, ys, "ro")
     plt.legend()

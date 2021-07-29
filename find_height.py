@@ -96,6 +96,20 @@ def remove_above_and_fit(y_org, y_fit, y_line, loop_num=2):
 
 
 
+
+def calc_area(p1, p2, p3):
+    """
+    """
+    (x1, y1), (x2, y2), (x3, y3) = p1, p2, p3
+
+    print(f"p1: {p1}, p2: {p2}, p3: {p3}")
+
+    tri_area = 0.5 * abs(x2 * y3 + x1 * y2 + x3 * y1 - x3 * y2 - x2 * y1 - x1 * y3)
+
+    return tri_area
+
+
+
 # =============================================================================
 # 
 # =============================================================================
@@ -236,8 +250,18 @@ def analysis(data_org, col_name):
     print(f"Peak Height (Orginal Data): {peak_height_org}")
     print(f"Peak Height (Curve Fitted Data): {peak_height_fit}")
     print("----------------------------------------------")
+
+    cor1 = [xs[0], ys[0]]
+    cor2 = [xs[1], ys[1]]
+    cor3 = [x[peaks[0]], y_org[peaks[0]]]
+    peak_area = calc_area(cor1, cor2, cor3)
+    print("")
+    print("----------------------------------------------")
+    print(f"Peak Area: {peak_area}")
+    print("----------------------------------------------")
         
-    return peak_height_org, peak_height_fit
+    return peak_height_org, peak_height_fit, peak_area
+
 
 
 if __name__ == "__main__":
@@ -247,7 +271,7 @@ if __name__ == "__main__":
         print('')
         print('')
         print(f"Processing on column {col} ... ")
-        peak_height_org, peak_height_fit = analysis(data, col)
+        peak_height_org, peak_height_fit, peak_area = analysis(data, col)
 
 
 

@@ -148,7 +148,6 @@ def analysis(data_org, col_name):
     
     
     y_support = remove_above_and_fit(y_org, y_fit, y_line, loop_num=2)
-    y_prune= prune_and_fit(y_org, y_fit, y_line, loop_num=1)
 
 
     pp1 = np.polynomial.Polynomial.fit(x, y_org, deg)

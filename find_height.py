@@ -16,7 +16,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from scipy.signal import find_peaks
-
+import math
 
 
 # =============================================================================
@@ -28,6 +28,24 @@ from scipy.signal import find_peaks
 # =============================================================================
 # Fancy Process to Find the Support Line
 # =============================================================================
+# def distance(p1, p2):
+#     """
+#     """
+#     (x1, y1), (x2, y2) = p1, p2
+#     dist = math.sqrt( (x1-x2)**2 + (y1-y2)**2 )
+#     return dist
+
+
+
+# def calc_area_by_side(a, b, c):
+#     """
+#     """
+#     s = (a + b + c) / 2  
+#     tri_area = math.sqrt( s * (s-a) * (s-b) * (s-c) )
+#     return tri_area
+
+
+
 def calc_area(p1, p2, p3):
     """
     """
@@ -38,6 +56,7 @@ def calc_area(p1, p2, p3):
     tri_area = 0.5 * abs(x2 * y3 + x1 * y2 + x3 * y1 - x3 * y2 - x2 * y1 - x1 * y3)
 
     return tri_area
+
 
 
 
@@ -183,7 +202,12 @@ def analysis(data_org, col_name):
     cor1 = [xs[0], ys[0]]
     cor2 = [xs[1], ys[1]]
     cor3 = [x[peaks[0]], y_org[peaks[0]]]
+
+    a = distance(cor1, cor2)
+    b = distance(cor1, cor3)
+    c = distance(cor2, cor3)
     peak_area = calc_area(cor1, cor2, cor3)
+
     print("")
     print("----------------------------------------------")
     print(f"Peak Area: {peak_area}")

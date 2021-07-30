@@ -203,9 +203,9 @@ def analysis(data_org, col_name):
     cor2 = [xs[1], ys[1]]
     cor3 = [x[peaks[0]], y_org[peaks[0]]]
 
-    a = distance(cor1, cor2)
-    b = distance(cor1, cor3)
-    c = distance(cor2, cor3)
+    # a = distance(cor1, cor2)
+    # b = distance(cor1, cor3)
+    # c = distance(cor2, cor3)
     peak_area = calc_area(cor1, cor2, cor3)
 
     print("")

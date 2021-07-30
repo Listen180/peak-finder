@@ -22,81 +22,12 @@ from scipy.signal import find_peaks
 # =============================================================================
 # 
 # =============================================================================
-input_f = "./data/curve.txt"
 
-data = pd.read_csv(input_f, header=None, sep="\t")
-data.columns = ["A", "B", "C"]
-
-y1 = data.loc[:, "A"]
-y2 = data.loc[:, "B"]
-y3 = data.loc[:, "C"]
-
-x_start = -600
-x_end = 100
-x_range = range(x_start, x_end, int((x_end-x_start)/len(data)))
-x = list(x_range)
-x = x[0:len(data)]
-
-
-## 
-img_save_path = './imgs/scatter_plot_all.png'
-plt.figure()
-plt.scatter(x, data["A"], color='green', label="A", s=5)
-plt.scatter(x, data["B"], color='red', label="B", s=5)
-plt.scatter(x, data["C"], color='purple', label="C", s=5)
-
-plt.title(f'Scatter Plot', fontsize=16)
-plt.xlabel('Default Index', fontsize=8)
-plt.ylabel('Value', fontsize=8)
-plt.legend()
-
-plt.savefig(img_save_path, dpi=300)
-print('')
-print(f"Image saved to: \"{img_save_path}\"")
-# plt.show()
-plt.close()
 
 
 # =============================================================================
 # Fancy Process to Find the Support Line
 # =============================================================================
-def remove_above(y_org, curve, line):
-    """
-    """
-    y_modified = y_org.copy()
-    data_points_left = []
-    for i, xv in enumerate(x):
-        data_i = y_org[i]
-        y_curve_i = curve[i]
-        y_line_i = line[i]
-        if y_curve_i < y_line_i:
-            data_points_left.append(data_i)
-    data_avg = np.mean(data_points_left)
-    for i, xv in enumerate(x):
-        data_i = y_org[i]
-        y_curve_i = curve[i]
-        y_line_i = line[i]
-        if y_curve_i >= y_line_i:
-            y_modified[i] = data_avg
-    return y_modified
-
-
-
-def remove_above_and_fit(y_org, y_fit, y_line, loop_num=2):
-    """
-    """
-    for i in range(loop_num):
-        temp = remove_above(y_org, y_fit, y_line)
-        z_temp = np.polyfit(x, temp, 1, rcond=None, full=False, w=None, cov=False)
-        p_temp = np.poly1d(z_temp)
-        y_temp = p_temp(x)
-        y_line = y_temp
-    # print(p_temp)
-    return y_temp
-
-
-
-
 def calc_area(p1, p2, p3):
     """
     """
@@ -160,9 +91,6 @@ def analysis(data_org, col_name):
     # print(f"p2: {p2}")
     y_line = p2(x)
     
-    
-    y_support = remove_above_and_fit(y_org, y_fit, y_line, loop_num=2)
-
 
     pp1 = np.polynomial.Polynomial.fit(x, y_org, deg)
     pp2 = np.polynomial.Polynomial.fit(x, y_org, 1)
@@ -185,7 +113,7 @@ def analysis(data_org, col_name):
     ## Get polynomial changing points
     # y = np.polyval(p1, x)
     Q = np.polyder(p1)  # f'
-    xs = np.roots(Q)  # 求多项式函数根
+    xs = np.roots(Q)  # get the root of polynomial
     xs = xs[(xs>x[0]) & (xs<x[-1])]
 
     # print("\n********"*3)
@@ -195,12 +123,14 @@ def analysis(data_org, col_name):
 
     Q2 = np.polyder(Q)  # f''
     y_d2 = np.polyval(Q2, xs)
-    is_gutter = [y_d2>0]
+    # is_gutter = [y_d2 > 0]
+    is_gutter = np.array(y_d2 > 0)
     print(f"is_gutter: {is_gutter}")
 
 
     xs = np.array(xs)
-    xs = xs[tuple(is_gutter)]
+    # xs = xs[tuple(is_gutter)]
+    xs = xs[is_gutter]
 
 
     x_gutter_gt_peak = xs[(xs > peak_x)][0]
@@ -211,7 +141,7 @@ def analysis(data_org, col_name):
 
     z_support = np.polyfit(xs, ys, 1, rcond=None, full=False, w=None, cov=False)
     p_support = np.poly1d(z_support)
-    y_support_new = p_support(x)
+    y_support = p_support(x)
 
 
 
@@ -224,7 +154,6 @@ def analysis(data_org, col_name):
     plt.plot(x, y_fit,'r',label='polyfit values')
     plt.plot(x, y_line,'yellow',label='fit line')
     plt.plot(x, y_support,'grey',label='support line')
-    plt.plot(x, y_support_new,'black',label='support line (new)')
     plt.plot(xs, ys, "ro")
     plt.legend()
     
@@ -266,6 +195,23 @@ def analysis(data_org, col_name):
 
 if __name__ == "__main__":
     
+
+    input_f = "./data/curve.txt"
+
+    data = pd.read_csv(input_f, header=None, sep="\t")
+    data.columns = ["A", "B", "C"]
+
+    y1 = data.loc[:, "A"]
+    y2 = data.loc[:, "B"]
+    y3 = data.loc[:, "C"]
+
+    x_start = -600
+    x_end = 100
+    x_range = range(x_start, x_end, int((x_end-x_start)/len(data)))
+    x = list(x_range)
+    x = x[0:len(data)]
+
+
     col_list = ["A", "B", "C"]
     for col in col_list:
         print('')
